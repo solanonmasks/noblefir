@@ -79,12 +79,14 @@ Open `assets/css/styles.css`. The first block is a list of every colour used:
 
 Change one value there and it updates everywhere on the site at once.
 
-### Swapping in the real photos
+### Swapping an image
 
-Every image is currently a placeholder. See
-[`assets/images/README.md`](assets/images/README.md) — it lists each filename,
-the size it should be, and where on the page it appears. Save the real photo
-over the placeholder using the same filename and nothing else needs touching.
+Save the new file over the old one, keeping the same filename — nothing else
+needs touching, unless its dimensions differ (in which case update the `width`
+and `height` on that `<img>` tag too).
+
+[`assets/images/README.md`](assets/images/README.md) lists every image, its
+size, where it appears, and which ones are still outstanding.
 
 ### Two behaviour switches
 
@@ -176,8 +178,12 @@ To go back to how things were before this redesign, the previous state is the
 Carried over from the design handoff, in rough priority order:
 
 1. **Connect the form** (above). Without it the page cannot do its job.
-2. **Swap in the real photography** and ask the client for an **SVG logo** —
-   only a raster one is published today.
+2. **Replace the logo.** It is the last placeholder left on the site, and it
+   shows in the header on every screen plus the footer. Ask the client for an
+   **SVG** if one exists. (The photography is now real — see
+   [`assets/images/README.md`](assets/images/README.md) for the four project
+   tiles, which are cropped from the other photos rather than being their own
+   shots.)
 3. **Replace the testimonial.** The current quote is placeholder copy. Use a
    real, attributed review — ideally pulled from the company's Google reviews.
 4. **Confirm the typefaces.** The live Wix site's fonts could not be read, so
