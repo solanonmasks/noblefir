@@ -1,0 +1,1803 @@
+/* ==========================================================================
+   Noble Fir Homes — homepage stylesheet
+   --------------------------------------------------------------------------
+   Everything the site looks like lives in this one file.
+   It is ordered top-to-bottom in the same order the page is built, so you can
+   scroll down looking for the section you want to change.
+
+   1.  Design tokens (colours, fonts, spacing)  <- change brand colours here
+   2.  Base / reset
+   3.  Reusable pieces (buttons, kickers, headings)
+   4.  Animation keyframes
+   5.  Announcement bar
+   6.  Header
+   7.  Hero
+   8.  Estimate form card
+   9.  Trust marquee
+   10. Services
+   11. Editorial / why us
+   12. Projects
+   13. Testimonial
+   14. Process
+   15. Service areas
+   16. FAQ
+   17. Closing CTA
+   18. Footer
+   19. Sticky call bar + scroll progress rail
+   20. Motion / reduced-motion
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. DESIGN TOKENS
+   Change a value here and it updates everywhere on the site.
+   ========================================================================== */
+
+:root {
+  /* --- Brand colours --- */
+  --ink:        #16181A;  /* near-black: main text, top bar, footer          */
+  --ink-panel:  #1B1E1C;  /* green-shifted charcoal: hero + projects bands   */
+  --paper:      #FFFCFA;  /* warm off-white: page background                 */
+  --paper-warm: #F4F0EA;  /* alternating section background                  */
+  --fir:        #2F4A3A;  /* deep green accent, used on light backgrounds    */
+  --sage:       #A7C0AE;  /* light green accent, used on dark backgrounds    */
+
+  /* --- Text on light backgrounds (paper / paper-warm) --- */
+  --ink-body:     rgba(22, 24, 26, 0.65);
+  --ink-body-alt: rgba(22, 24, 26, 0.68);
+  --ink-muted:    rgba(22, 24, 26, 0.72);
+  --ink-soft:     rgba(22, 24, 26, 0.55);
+  --ink-line:     rgba(22, 24, 26, 0.14);
+  --ink-line-alt: rgba(22, 24, 26, 0.16);
+  --ink-field:    rgba(22, 24, 26, 0.18);
+  --ink-track:    rgba(22, 24, 26, 0.10);
+
+  /* --- Text on dark backgrounds (ink / ink-panel) --- */
+  --paper-body:   rgba(255, 252, 250, 0.78);
+  --paper-second: rgba(255, 252, 250, 0.72);
+  --paper-muted:  rgba(255, 252, 250, 0.60);
+  --paper-legal:  rgba(255, 252, 250, 0.50);
+  --paper-line:   rgba(255, 252, 250, 0.14);
+  --paper-edge:   rgba(255, 252, 250, 0.35);
+
+  /* --- Typefaces --- */
+  --font-sans:  'Jost', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+
+  /* --- Layout --- */
+  --shell:  1600px;  /* outer page width  */
+  --width:  1360px;  /* content width     */
+  --gutter: 28px;    /* left/right padding */
+
+  /* --- Vertical rhythm --- */
+  --band:      clamp(72px, 8vw, 128px);
+  --band-tight: clamp(64px, 7vw, 110px);
+  --card-pad:  clamp(26px, 2.4vw, 38px);
+
+  /* --- Motion --- */
+  --ease-out:  cubic-bezier(0.19, 1, 0.22, 1);  /* reveals, header, magnet   */
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);  /* entrances, image hover    */
+
+  /* --- The one shadow in the design --- */
+  --card-shadow:   0 40px 90px -30px rgba(0, 0, 0, 0.65);
+  --header-shadow: 0 18px 44px -28px rgba(0, 0, 0, 0.9);
+}
+
+
+/* ==========================================================================
+   2. BASE / RESET
+   ========================================================================== */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img { max-width: 100%; }
+
+a {
+  color: var(--fir);
+  text-decoration: none;
+  transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+
+a:hover { color: var(--ink); }
+
+input,
+select,
+textarea,
+button { font-family: inherit; }
+
+/* Radius is 0 everywhere in this design. The two exceptions are the small
+   status dots and the cursor-follow badge — both set their own radius. */
+
+/* A visible focus ring for keyboard users. The prototype removed the default
+   outline; this puts a branded one back so the page stays accessible. */
+:focus-visible {
+  outline: 2px solid var(--fir);
+  outline-offset: 3px;
+}
+
+.on-dark :focus-visible,
+.dark-band :focus-visible {
+  outline-color: var(--sage);
+}
+
+/* Visible only to screen readers. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip link — first thing a keyboard user reaches. */
+.skip-link {
+  position: absolute;
+  left: 8px;
+  top: -60px;
+  z-index: 100;
+  background: var(--paper);
+  color: var(--ink);
+  padding: 12px 18px;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus { top: 8px; }
+
+.page {
+  position: relative;
+  max-width: var(--shell);
+  margin: 0 auto;
+  background: var(--paper);
+  overflow: hidden;
+}
+
+
+/* ==========================================================================
+   3. REUSABLE PIECES
+   ========================================================================== */
+
+.wrap {
+  max-width: var(--width);
+  margin: 0 auto;
+}
+
+.band {
+  padding: var(--band) var(--gutter);
+  scroll-margin-top: 90px;
+}
+
+.band--warm { background: var(--paper-warm); }
+.band--dark { background: var(--ink-panel); color: var(--paper); }
+
+/* --- Kicker / eyebrow: the small uppercase label above a heading --- */
+.kicker {
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fir);
+  margin-bottom: 18px;
+}
+
+.kicker--sage { color: var(--sage); }
+
+/* --- Headings --- */
+.h2 {
+  font-size: clamp(34px, 4vw, 58px);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.h2--sm {
+  font-size: clamp(32px, 3.6vw, 52px);
+  line-height: 1.06;
+}
+
+/* --- Body copy --- */
+.lead {
+  font-size: clamp(16px, 1.3vw, 18px);
+  line-height: 1.7;
+  color: var(--ink-body);
+  font-weight: 300;
+  margin: 0;
+  max-width: 46ch;
+}
+
+/* --- Two-column section header: heading left, supporting line right --- */
+.section-head {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 40px;
+  align-items: end;
+  margin-bottom: clamp(40px, 4vw, 64px);
+}
+
+/* --- Buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px 32px;
+  border: 0;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn--sage { background: var(--sage);  color: var(--ink); }
+.btn--sage:hover { background: var(--paper); color: var(--ink); }
+
+.btn--ink { background: var(--ink); color: var(--paper); }
+.btn--ink:hover { background: var(--fir); color: var(--paper); }
+
+.btn--fir { background: var(--fir); color: var(--paper); }
+.btn--fir:hover { background: var(--ink); color: var(--paper); }
+
+.btn--outline {
+  background: transparent;
+  border: 1px solid var(--paper-edge);
+  color: var(--paper);
+  padding: 18px 30px;
+}
+
+.btn--outline:hover {
+  border-color: var(--paper);
+  background: rgba(255, 252, 250, 0.07);
+  color: var(--paper);
+}
+
+.btn--block { width: 100%; }
+
+.btn[disabled] { opacity: 0.6; cursor: progress; }
+
+/* --- Underlined text link, used for "Discuss a project" etc. --- */
+.link-underline {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--fir);
+  padding-bottom: 6px;
+  white-space: nowrap;
+}
+
+.link-underline--dark {
+  color: var(--paper);
+  border-bottom-color: var(--paper-edge);
+  letter-spacing: 0.12em;
+}
+
+.link-underline--dark:hover {
+  color: var(--sage);
+  border-bottom-color: var(--sage);
+}
+
+/* --- "Price this →" style link that sits at the bottom of a card --- */
+.link-arrow {
+  margin-top: auto;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  display: inline-flex;
+  gap: 9px;
+  align-items: center;
+}
+
+/* --- Ruled grid: a 1px gap over a border-coloured background, so the
+       hairlines between cards read as one continuous ruled grid. --- */
+.ruled {
+  display: grid;
+  gap: 1px;
+  background: var(--ink-line);
+}
+
+
+/* ==========================================================================
+   4. ANIMATION KEYFRAMES
+   ========================================================================== */
+
+@keyframes nfRise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes nfFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes nfLine {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes nfMarquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes nfLift {
+  from { opacity: 0; transform: translateY(105%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ==========================================================================
+   5. ANNOUNCEMENT BAR
+   ========================================================================== */
+
+.announce {
+  background: var(--ink);
+  color: var(--paper);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+  padding: 10px 20px;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.announce span { white-space: nowrap; opacity: 0.8; }
+.announce .announce__hi { color: var(--sage); opacity: 1; }
+
+
+/* ==========================================================================
+   6. HEADER
+   ========================================================================== */
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: rgba(27, 30, 28, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 252, 250, 0.12);
+  transition: background 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Added by JS once the page is scrolled past 60px. */
+.header.is-compact {
+  background: rgba(22, 24, 26, 0.97);
+  box-shadow: var(--header-shadow);
+}
+
+.header__inner {
+  max-width: var(--width);
+  margin: 0 auto;
+  padding: 14px var(--gutter);
+  min-height: 82px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 28px;
+  transition: padding 0.45s var(--ease-out), min-height 0.45s var(--ease-out);
+}
+
+.header.is-compact .header__inner {
+  padding: 6px var(--gutter);
+  min-height: 64px;
+}
+
+.header__logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.header__logo img {
+  height: 56px;
+  width: auto;
+  display: block;
+  transition: height 0.45s var(--ease-out);
+}
+
+.header.is-compact .header__logo img { height: 42px; }
+
+.nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 30px;
+  margin-left: auto;
+  font-size: 13px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.nav a {
+  color: rgba(255, 252, 250, 0.82);
+  padding: 6px 0;
+  /* A transparent border is reserved at rest so the hover underline does not
+     shift the layout when it appears. */
+  border-bottom: 1px solid transparent;
+}
+
+.nav a:hover {
+  color: var(--paper);
+  border-bottom-color: var(--sage);
+}
+
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-shrink: 0;
+}
+
+.header__phone {
+  color: var(--paper);
+  font-size: 17px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.header__phone:hover { color: var(--sage); }
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--sage);
+  box-shadow: 0 0 0 4px rgba(167, 192, 174, 0.22);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.header__cta {
+  background: var(--paper);
+  color: var(--ink);
+  padding: 13px 22px;
+  font-size: 12.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.header__cta:hover { background: var(--sage); color: var(--ink); }
+
+
+/* ==========================================================================
+   7. HERO
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  background: var(--ink-panel);
+  color: var(--paper);
+  overflow: hidden;
+  scroll-margin-top: 90px;
+}
+
+.hero__media {
+  position: absolute;
+  inset: 0;
+}
+
+/* The image is taller than its box and pulled up, so the parallax has real
+   overhang to travel into and never exposes the bare background. */
+.hero__media img {
+  width: 100%;
+  height: 126%;
+  margin-top: -13%;
+  object-fit: cover;
+  opacity: 0.5;
+  filter: saturate(0.8) contrast(1.02);
+  will-change: transform;
+}
+
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg,
+    rgba(22, 24, 26, 0.94) 0%,
+    rgba(22, 24, 26, 0.78) 42%,
+    rgba(22, 24, 26, 0.34) 100%);
+}
+
+.hero__inner {
+  position: relative;
+  max-width: var(--width);
+  margin: 0 auto;
+  padding: clamp(56px, 7vw, 104px) var(--gutter) clamp(56px, 6vw, 96px);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  gap: clamp(36px, 5vw, 76px);
+  align-items: center;
+}
+
+.hero__copy { animation: nfRise 0.9s var(--ease-soft) both; }
+
+.hero__kicker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 26px;
+}
+
+.hero__rule {
+  width: 44px;
+  height: 1px;
+  background: var(--sage);
+  display: block;
+  flex-shrink: 0;
+  transform-origin: left;
+  animation: nfLine 0.8s 0.3s var(--ease-soft) both;
+}
+
+.hero__kicker span:last-child {
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--sage);
+}
+
+.hero__title {
+  font-size: clamp(42px, 5.6vw, 82px);
+  line-height: 1.02;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  margin: 0 0 24px;
+}
+
+/* Each line sits in its own overflow:hidden mask and lifts up into view. */
+.hero__line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.04em;
+}
+
+.hero__line:last-child { padding-bottom: 0.08em; }
+
+.hero__line > span {
+  display: block;
+  animation: nfLift 1.1s var(--ease-out) both;
+}
+
+.hero__line:nth-child(1) > span { animation-delay: 0.05s; }
+.hero__line:nth-child(2) > span { animation-delay: 0.17s; }
+.hero__line:nth-child(3) > span { animation-delay: 0.29s; }
+
+.hero__line--serif > span {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--sage);
+}
+
+.hero__intro {
+  font-size: clamp(16.5px, 1.35vw, 19px);
+  line-height: 1.65;
+  color: var(--paper-body);
+  max-width: 52ch;
+  margin: 0 0 34px;
+  font-weight: 300;
+}
+
+.hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 40px;
+}
+
+.hero__ctas .btn span { font-size: 17px; line-height: 1; }
+
+/* --- Stat row --- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: 22px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(255, 252, 250, 0.16);
+  max-width: 620px;
+}
+
+.stat__num {
+  font-size: clamp(26px, 2.6vw, 34px);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.stat__num span { color: var(--sage); }
+
+.stat__label {
+  font-size: 11.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--paper-muted);
+  margin-top: 8px;
+}
+
+
+/* ==========================================================================
+   8. ESTIMATE FORM CARD
+   ========================================================================== */
+
+.quote {
+  background: var(--paper);
+  color: var(--ink);
+  padding: clamp(26px, 2.6vw, 38px);
+  box-shadow: var(--card-shadow);
+  animation: nfRise 1s 0.14s var(--ease-soft) both;
+  scroll-margin-top: 110px;
+}
+
+.quote__step {
+  font-size: 11.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fir);
+  margin-bottom: 12px;
+}
+
+.quote__title {
+  font-size: clamp(25px, 2.3vw, 31px);
+  font-weight: 300;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  margin: 0 0 8px;
+}
+
+.quote__reassure {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: rgba(22, 24, 26, 0.62);
+  margin: 0 0 22px;
+  font-weight: 300;
+}
+
+.quote__progress {
+  height: 2px;
+  background: var(--ink-track);
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.quote__progress i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--fir);
+  width: 50%;
+  transition: width 0.45s var(--ease-soft);
+}
+
+.quote__panel { display: grid; gap: 14px; }
+.quote__panel[hidden] { display: none; }
+
+.quote__label {
+  display: block;
+  font-size: 11.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+
+.services-pick {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.services-pick button {
+  text-align: left;
+  padding: 13px 14px;
+  font-size: 14px;
+  border: 1px solid var(--ink-line-alt);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.services-pick button:hover,
+.services-pick button[aria-pressed="true"] {
+  border-color: var(--fir);
+  background: rgba(47, 74, 58, 0.05);
+}
+
+.quote__picked {
+  font-size: 13px;
+  color: var(--fir);
+  margin-top: 10px;
+  min-height: 18px;
+}
+
+.quote__fields { display: grid; gap: 12px; }
+
+.quote__pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.quote__fields input {
+  padding: 14px 15px;
+  font-size: 15px;
+  border: 1px solid var(--ink-field);
+  background: transparent;
+  color: var(--ink);
+  width: 100%;
+}
+
+.quote__fields input:focus {
+  outline: none;
+  border-color: var(--fir);
+  box-shadow: 0 0 0 1px var(--fir);
+}
+
+/* Field that failed validation. */
+.quote__fields input[aria-invalid="true"] { border-color: #A2402F; }
+
+.quote__error {
+  font-size: 13px;
+  color: #A2402F;
+  min-height: 18px;
+  line-height: 1.4;
+}
+
+.quote__back {
+  background: transparent;
+  border: 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.quote__back:hover { color: var(--ink); }
+
+/* Honeypot: a real person never sees this, a spam bot fills it in. */
+.quote__hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.quote__note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--ink-track);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+.quote__note .dot {
+  width: 6px;
+  height: 6px;
+  background: var(--fir);
+  box-shadow: none;
+}
+
+/* --- Success state --- */
+.quote__done { padding: 20px 0; animation: nfFade 0.5s both; }
+.quote__done[hidden] { display: none; }
+
+.quote__tick {
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--fir);
+  display: grid;
+  place-items: center;
+  color: var(--fir);
+  font-size: 22px;
+  margin-bottom: 22px;
+}
+
+.quote__done h2 {
+  font-size: 29px;
+  font-weight: 300;
+  letter-spacing: -0.015em;
+  margin: 0 0 12px;
+}
+
+.quote__done p {
+  font-size: 15.5px;
+  line-height: 1.65;
+  color: var(--ink-body-alt);
+  margin: 0 0 20px;
+  font-weight: 300;
+}
+
+.quote__done a {
+  font-size: 12.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--fir);
+  padding-bottom: 4px;
+}
+
+
+/* ==========================================================================
+   9. TRUST MARQUEE
+   ========================================================================== */
+
+.marquee {
+  background: var(--ink);
+  color: rgba(255, 252, 250, 0.85);
+  border-top: 1px solid rgba(255, 252, 250, 0.08);
+}
+
+.marquee__mask {
+  padding: 24px 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 9%, #000 91%, transparent);
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: nfMarquee 42s linear infinite;
+  will-change: transform;
+}
+
+.marquee__mask:hover .marquee__track { animation-play-state: paused; }
+
+.marquee__group {
+  display: flex;
+  align-items: center;
+  gap: 44px;
+  padding-right: 44px;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.marquee__sep { color: var(--sage); }
+
+
+/* ==========================================================================
+   10. SERVICES
+   ========================================================================== */
+
+.services__grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+
+.service {
+  background: var(--paper);
+  padding: var(--card-pad);
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+  transition: background 0.35s ease;
+}
+
+.service:hover { background: var(--paper-warm); }
+
+.service__media {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  margin-bottom: 26px;
+}
+
+.service__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s var(--ease-soft);
+}
+
+.service:hover .service__media img { transform: scale(1.05); }
+
+.service__index {
+  font-size: 11.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 12px;
+}
+
+.service h3 {
+  font-size: 23px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  margin: 0 0 12px;
+}
+
+.service p {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink-body);
+  margin: 0 0 20px;
+  font-weight: 300;
+}
+
+
+/* ==========================================================================
+   11. EDITORIAL / WHY US
+   ========================================================================== */
+
+.editorial {
+  max-width: var(--width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+  gap: clamp(36px, 5vw, 80px);
+  align-items: center;
+}
+
+.editorial__media { position: relative; }
+
+.editorial__media img {
+  width: 100%;
+  aspect-ratio: 6 / 5;
+  object-fit: cover;
+  display: block;
+  will-change: transform;
+}
+
+/* The dark plaque that overlaps the photo's bottom-right corner. */
+.plaque {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  background: var(--ink-panel);
+  color: var(--paper);
+  padding: 26px 30px;
+  max-width: 260px;
+}
+
+.plaque__word {
+  font-family: var(--font-serif);
+  font-size: 30px;
+  font-weight: 300;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.plaque__sub {
+  font-size: 11.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--sage);
+}
+
+.editorial__body p.editorial__intro {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--ink-body-alt);
+  margin: 0 0 32px;
+  font-weight: 300;
+  max-width: 50ch;
+}
+
+.editorial__body .h2 { margin-bottom: 28px; }
+
+.reasons {
+  display: grid;
+  gap: 1px;
+  background: var(--ink-line);
+  border-top: 1px solid var(--ink-line);
+  border-bottom: 1px solid var(--ink-line);
+}
+
+.reason {
+  background: var(--paper-warm);
+  padding: 18px 2px;
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 16px;
+  align-items: baseline;
+}
+
+.reason__tick { color: var(--fir); font-size: 15px; }
+
+.reason strong {
+  font-weight: 500;
+  font-size: 16.5px;
+}
+
+.reason span.reason__text {
+  color: var(--ink-body);
+  font-size: 16px;
+  font-weight: 300;
+}
+
+.editorial__cta { margin-top: 34px; padding: 17px 30px; font-size: 12.5px; }
+
+
+/* ==========================================================================
+   12. PROJECTS
+   ========================================================================== */
+
+.projects__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 32px;
+  flex-wrap: wrap;
+  margin-bottom: clamp(36px, 4vw, 60px);
+}
+
+.projects__grid {
+  --project-gap: clamp(18px, 2vw, 28px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--project-gap);
+}
+
+.project {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  color: var(--paper);
+}
+
+.project:hover { color: var(--paper); }
+
+/* Two wide tiles and two tall ones, arranged two per row:
+   wide + tall on the first row, tall + wide on the second.
+
+   The basis percentages are what force exactly two per row — 62% + 36% leaves
+   no space for a third. The clamp floor takes over on narrow screens, where
+   two 300px tiles no longer fit side by side, so they stack one per row. */
+.project--wide {
+  flex: 1.7 1 clamp(300px, calc(62% - var(--project-gap)), 100%);
+  min-height: 300px;
+}
+
+.project--tall {
+  flex: 1 1 clamp(280px, calc(36% - var(--project-gap)), 100%);
+}
+
+.project img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.9s var(--ease-soft);
+}
+
+.project--wide img {
+  min-height: 300px;
+  aspect-ratio: 3 / 2;
+}
+
+.project--tall img { aspect-ratio: 8 / 9; }
+
+.project:hover img { transform: scale(1.04); }
+
+.project__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top,
+    rgba(22, 24, 26, 0.86) 0%,
+    rgba(22, 24, 26, 0.10) 58%,
+    transparent 100%);
+}
+
+.project__body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: clamp(24px, 2.4vw, 38px);
+}
+
+.project--tall .project__body { padding: clamp(22px, 2vw, 30px); }
+
+.project__place {
+  font-size: 11.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--sage);
+  margin-bottom: 10px;
+}
+
+.project h3 {
+  font-size: clamp(24px, 2.2vw, 32px);
+  font-weight: 300;
+  letter-spacing: -0.015em;
+  margin: 0 0 10px;
+}
+
+.project--tall h3 { font-size: 24px; margin-bottom: 8px; }
+
+.project p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--paper-body);
+  margin: 0;
+  max-width: 46ch;
+  font-weight: 300;
+}
+
+.project--tall p { font-size: 14.5px; color: rgba(255, 252, 250, 0.75); }
+
+/* The pill that follows the cursor across the project tiles. */
+.project-badge {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 85;
+  pointer-events: none;
+  padding: 13px 20px;
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 500 11.5px/1 var(--font-sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 14px 34px -14px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.4);
+  transition: opacity 0.3s ease, transform 0.45s var(--ease-out);
+}
+
+.project-badge.is-on {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+
+/* ==========================================================================
+   13. TESTIMONIAL
+   ========================================================================== */
+
+.testimonial {
+  padding: var(--band-tight) var(--gutter);
+  background: var(--paper);
+}
+
+.testimonial__inner {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.testimonial__stars {
+  color: var(--fir);
+  letter-spacing: 0.3em;
+  font-size: 15px;
+  margin-bottom: 26px;
+}
+
+.testimonial blockquote {
+  margin: 0 0 30px;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(24px, 2.8vw, 38px);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.testimonial figcaption {
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+
+/* ==========================================================================
+   14. PROCESS
+   ========================================================================== */
+
+.process__head { margin-bottom: clamp(34px, 4vw, 56px); }
+
+.process__head .lead { max-width: 44ch; font-size: 16.5px; }
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--ink-line-alt);
+  margin-bottom: clamp(32px, 3.5vw, 52px);
+}
+
+.tabs button {
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 16px 0 14px;
+  margin-right: 26px;
+  font-size: 12.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  color: var(--ink-muted);
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.tabs button[aria-selected="true"] {
+  border-bottom-color: var(--fir);
+  color: var(--ink);
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: clamp(24px, 3vw, 48px);
+  animation: nfFade 0.4s both;
+}
+
+.steps[hidden] { display: none; }
+
+.step__num {
+  font-family: var(--font-serif);
+  font-size: 46px;
+  font-weight: 300;
+  color: var(--fir);
+  line-height: 1;
+  margin-bottom: 18px;
+}
+
+.step h3 {
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  margin: 0 0 12px;
+}
+
+.step p {
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: var(--ink-body-alt);
+  margin: 0;
+  font-weight: 300;
+}
+
+
+/* ==========================================================================
+   15. SERVICE AREAS
+   ========================================================================== */
+
+.areas {
+  max-width: var(--width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+  gap: clamp(36px, 5vw, 80px);
+  align-items: center;
+}
+
+.areas__copy .lead {
+  max-width: 44ch;
+  font-size: 16.5px;
+  margin-bottom: 30px;
+}
+
+.areas__copy .h2 { margin-bottom: 22px; }
+
+.areas__grid {
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  border: 1px solid var(--ink-line);
+}
+
+.area {
+  background: var(--paper);
+  padding: 24px 22px;
+  transition: background 0.3s ease;
+}
+
+.area:hover { background: var(--paper-warm); }
+
+.area__name {
+  font-size: 19px;
+  font-weight: 400;
+  margin-bottom: 6px;
+}
+
+.area__note {
+  font-size: 12.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.area--ask {
+  background: var(--ink-panel);
+  color: var(--paper);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+.area--ask a {
+  color: var(--sage);
+  border-bottom: 1px solid rgba(167, 192, 174, 0.5);
+}
+
+.area--ask a:hover { color: var(--paper); border-bottom-color: var(--paper); }
+
+
+/* ==========================================================================
+   16. FAQ
+   ========================================================================== */
+
+.faq__inner { max-width: 1100px; margin: 0 auto; }
+
+.faq__head {
+  text-align: center;
+  margin-bottom: clamp(36px, 4vw, 56px);
+}
+
+.faq__list { border-top: 1px solid var(--ink-line-alt); }
+
+.faq__item { border-bottom: 1px solid var(--ink-line-alt); }
+
+.faq__trigger {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 26px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  text-align: left;
+  color: var(--ink);
+}
+
+.faq__q {
+  font-size: clamp(17px, 1.6vw, 21px);
+  font-weight: 400;
+  letter-spacing: -0.005em;
+}
+
+.faq__sign {
+  font-size: 20px;
+  color: var(--fir);
+  flex-shrink: 0;
+}
+
+.faq__answer { animation: nfFade 0.3s both; }
+.faq__answer[hidden] { display: none; }
+
+.faq__answer p {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--ink-body-alt);
+  margin: 0 0 28px;
+  max-width: 70ch;
+  font-weight: 300;
+}
+
+
+/* ==========================================================================
+   17. CLOSING CTA
+   ========================================================================== */
+
+.closing {
+  position: relative;
+  background: var(--ink-panel);
+  color: var(--paper);
+  overflow: hidden;
+}
+
+.closing > img {
+  position: absolute;
+  top: -13%;
+  left: 0;
+  width: 100%;
+  height: 126%;
+  object-fit: cover;
+  opacity: 0.3;
+  will-change: transform;
+}
+
+.closing__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(22, 24, 26, 0.93), rgba(22, 24, 26, 0.62));
+}
+
+.closing__inner {
+  position: relative;
+  max-width: var(--width);
+  margin: 0 auto;
+  padding: var(--band) var(--gutter);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 44px;
+  align-items: center;
+}
+
+.closing h2 {
+  font-size: clamp(34px, 4.4vw, 64px);
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+  margin: 0 0 20px;
+  text-wrap: balance;
+}
+
+.closing p {
+  font-size: 17.5px;
+  line-height: 1.7;
+  color: var(--paper-body);
+  margin: 0;
+  max-width: 48ch;
+  font-weight: 300;
+}
+
+.closing .kicker { margin-bottom: 20px; }
+
+.closing__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 260px;
+}
+
+.closing__block {
+  padding: 22px 30px;
+  text-align: center;
+}
+
+.closing__block--solid { background: var(--paper); color: var(--ink); }
+.closing__block--solid:hover { background: var(--sage); color: var(--ink); }
+
+.closing__block--outline {
+  border: 1px solid var(--paper-edge);
+  color: var(--paper);
+}
+
+.closing__block--outline:hover {
+  border-color: var(--paper);
+  background: rgba(255, 252, 250, 0.08);
+  color: var(--paper);
+}
+
+.closing__block small {
+  display: block;
+  font-size: 11.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 6px;
+}
+
+.closing__num { font-size: 22px; letter-spacing: 0.01em; }
+
+.closing__alt {
+  font-size: 17px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+
+/* ==========================================================================
+   18. FOOTER
+   ========================================================================== */
+
+.footer {
+  background: var(--ink);
+  color: var(--paper-second);
+  padding: clamp(56px, 6vw, 88px) var(--gutter) 0;
+}
+
+.footer__cols {
+  max-width: var(--width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 44px;
+  padding-bottom: 52px;
+}
+
+.footer__logo {
+  height: 74px;
+  width: auto;
+  display: block;
+  margin-bottom: 22px;
+}
+
+.footer__blurb {
+  font-size: 14.5px;
+  line-height: 1.7;
+  margin: 0;
+  max-width: 34ch;
+  font-weight: 300;
+}
+
+.footer__heading {
+  font-size: 11.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--sage);
+  margin-bottom: 20px;
+}
+
+.footer__list {
+  display: grid;
+  gap: 12px;
+  font-size: 15px;
+  font-weight: 300;
+}
+
+.footer__list a { color: var(--paper-body); }
+.footer__list a:hover { color: var(--paper); }
+.footer__list a.is-strong { color: var(--paper); }
+.footer__list a.is-strong:hover { color: var(--sage); }
+
+.footer__note {
+  font-size: 14.5px;
+  line-height: 1.65;
+  margin: 0 0 16px;
+  font-weight: 300;
+}
+
+.subscribe {
+  display: flex;
+  border-bottom: 1px solid rgba(255, 252, 250, 0.3);
+}
+
+.subscribe input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  color: var(--paper);
+  padding: 12px 0;
+  font-size: 15px;
+}
+
+.subscribe input:focus { outline: none; }
+.subscribe:focus-within { border-bottom-color: var(--sage); }
+
+.subscribe button {
+  background: transparent;
+  border: 0;
+  color: var(--sage);
+  cursor: pointer;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 12px 0 12px 14px;
+  white-space: nowrap;
+}
+
+.subscribe button:hover { color: var(--paper); }
+
+.footer__bottom {
+  max-width: var(--width);
+  margin: 0 auto;
+  border-top: 1px solid var(--paper-line);
+  padding: 26px 0 34px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 18px;
+  font-size: 13px;
+  color: var(--paper-legal);
+}
+
+.footer__social {
+  display: flex;
+  gap: 22px;
+}
+
+.footer__social a { color: var(--paper-legal); }
+.footer__social a:hover { color: var(--sage); }
+
+
+/* ==========================================================================
+   19. STICKY CALL BAR + SCROLL PROGRESS RAIL
+   ========================================================================== */
+
+.callbar {
+  position: sticky;
+  bottom: 0;
+  z-index: 70;
+  background: var(--fir);
+  color: var(--paper);
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid rgba(255, 252, 250, 0.2);
+}
+
+.callbar a {
+  flex: 1;
+  color: var(--paper);
+  padding: 17px 20px;
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.callbar a:first-child { border-right: 1px solid rgba(255, 252, 250, 0.2); }
+.callbar a:hover { background: rgba(255, 252, 250, 0.1); color: var(--paper); }
+
+.rail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 90;
+  background: transparent;
+  pointer-events: none;
+}
+
+.rail i {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--sage);
+  transform-origin: left;
+}
+
+
+/* ==========================================================================
+   20. MOTION
+   Scroll reveals are set up by assets/js/main.js. The classes below are what
+   it toggles. If JavaScript never runs, nothing is hidden — the page is fully
+   readable without it.
+   ========================================================================== */
+
+/* Panels that JavaScript collapses (form step 2, the inactive process tabs,
+   the closed FAQ answers). They are hidden only once the `js` class is on
+   <html>, which an inline script sets before the body is parsed — so they
+   never flash open, and a visitor without JavaScript sees all of them. */
+.js [data-collapsed] { display: none; }
+
+.js-reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition-property: opacity, transform, clip-path;
+  transition-duration: 0.95s;
+  transition-timing-function: var(--ease-out);
+  will-change: opacity, transform, clip-path;
+}
+
+.js-reveal--clip {
+  transform: scale(1.06);
+  clip-path: inset(0 0 100% 0);
+  transition-duration: 1.25s;
+}
+
+.js-reveal.is-in {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 0 0% 0);
+}
+
+/* Applied when a target is revealed instantly, e.g. after an anchor jump. */
+.js-reveal.is-instant {
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+}
+
+/* Magnetic CTAs. The transform is written by JS; the easing lives here. */
+.is-magnet { transition: transform 0.4s var(--ease-out), background 0.3s ease, color 0.3s ease; }
+.is-magnet.is-tracking { transition: transform 0.12s linear, background 0.3s ease, color 0.3s ease; }
+
+/* Anyone who has asked their system to reduce motion gets a still page. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .js-reveal { opacity: 1; transform: none; clip-path: none; }
+}
+
+
+/* ==========================================================================
+   21. NARROW SCREENS
+   The design is fluid and mostly needs no breakpoints — the grids collapse on
+   their own. The header is the exception: left to wrap freely it becomes a
+   three-line, ~280px-tall sticky bar that covers a third of a phone screen.
+   These rules keep it compact without dropping any navigation.
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .header__inner {
+    padding: 10px var(--gutter);
+    min-height: 0;
+    gap: 10px 16px;
+  }
+
+  .header.is-compact .header__inner {
+    padding: 6px var(--gutter);
+    min-height: 0;
+  }
+
+  .header__logo img,
+  .header.is-compact .header__logo img { height: 42px; }
+
+  .header__actions { margin-left: auto; }
+
+  /* The nav moves to its own full-width row underneath and scrolls sideways
+     if it runs out of room, rather than wrapping onto extra lines. */
+  .nav {
+    order: 3;
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 22px;
+    font-size: 11.5px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .nav::-webkit-scrollbar { display: none; }
+}
+
+@media (max-width: 520px) {
+  /* Tightened just enough that the logo, phone number and Get Estimate
+     button all share one row instead of wrapping onto two. */
+  .header__inner { gap: 8px 12px; }
+
+  .header__actions { gap: 12px; }
+
+  .header__phone { font-size: 15px; gap: 7px; }
+
+  .header__cta {
+    padding: 10px 14px;
+    font-size: 11px;
+    letter-spacing: 0.09em;
+  }
+
+  .announce {
+    font-size: 10.5px;
+    gap: 6px 16px;
+    padding: 9px 16px;
+  }
+
+  /* Two side-by-side name fields get cramped below this width. */
+  .quote__pair { grid-template-columns: 1fr; }
+}
